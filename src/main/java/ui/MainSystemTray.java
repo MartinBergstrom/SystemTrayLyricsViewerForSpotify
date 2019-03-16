@@ -1,3 +1,8 @@
+package ui;
+
+import spotifyApi.CurrentlyPlaying;
+import spotifyApi.SpotifyApiHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -5,26 +10,24 @@ import java.awt.event.MouseEvent;
 import java.net.URL;
 
 /**
- * Main start point
  */
 public class MainSystemTray {
-
-    public static void main(String[]args){
-        new MainSystemTray();
-    }
-
     private final TrayIcon trayIcon = new TrayIcon(createImage("images/rsz_1lyrics-text.png", "tray icon"));
+    private SpotifyApiHandler spotifyApiHandler;
 
-    public MainSystemTray(){
+    public MainSystemTray(SpotifyApiHandler spotifyApiHandler) {
         if (!SystemTray.isSupported()) {
             System.out.println("RecorderSystemTray is not supported");
             return;
         }
+        this.spotifyApiHandler = spotifyApiHandler;
+
         final SystemTray tray = SystemTray.getSystemTray();
         trayIcon.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
-                    System.out.println("clicked once...");
+                    CurrentlyPlaying currentlyPlaying = spotifyApiHandler.getMyCurrentlyPlaying();
+                    System.out.format("Currently playing song %s by %s", currentlyPlaying.getSong(), currentlyPlaying.getArtist());
                 }
             }
         });
