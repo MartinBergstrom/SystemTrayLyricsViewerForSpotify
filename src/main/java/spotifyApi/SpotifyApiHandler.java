@@ -14,6 +14,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalTime;
 
 public class SpotifyApiHandler  {
     private static final String API_TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -25,6 +26,8 @@ public class SpotifyApiHandler  {
     private SpotifyToken spotifyToken;
     private MyHttpClient client;
     private CredentialsObtainer credentialsObtainer;
+
+    private LocalTime tokenExpiryStartTime;
 
     private EventBus eventBus;
 
@@ -48,15 +51,7 @@ public class SpotifyApiHandler  {
 
     private void handleAuthorizationCode(String code) {
         String body = "grant_type=authorization_code" + "&code=" + code + "&redirect_uri=" + REDIRECT_URL;
-        String encoded = credentialsObtainer.getBase64encodedCredentials();
-        String response = client.postRequest(API_TOKEN_URL, body, (postRequest) -> {
-            postRequest.addHeader("Content-Type", "application/x-www-form-urlencoded");
-            postRequest.addHeader("Authorization", "Basic " + encoded);
-        });
-        spotifyToken = new GsonBuilder()
-                .setPrettyPrinting()
-                .create()
-                .fromJson(response, SpotifyToken.class);
+        requestTokenApi(body);
         mainSystemTray = new MainSystemTray(this);
     }
 
@@ -73,7 +68,30 @@ public class SpotifyApiHandler  {
         }
     }
 
+    private void requestTokenApi(String body) {
+        String encoded = credentialsObtainer.getBase64encodedCredentials();
+        String response = client.postRequest(API_TOKEN_URL, body, (postRequest) -> {
+            postRequest.addHeader("Content-Type", "application/x-www-form-urlencoded");
+            postRequest.addHeader("Authorization", "Basic " + encoded);
+        });
+        spotifyToken = new GsonBuilder()
+                .setPrettyPrinting()
+                .create()
+                .fromJson(response, SpotifyToken.class);
+        tokenExpiryStartTime = LocalTime.now();
+    }
+
+    private void refreshToken() {
+        String body = "grant_type=refresh_token" + "&refresh_token=" + spotifyToken.getRefresh_token();
+        requestTokenApi(body);
+    }
+
     public CurrentlyPlaying getMyCurrentlyPlaying() {
+        LocalTime startTimePlusExpirySeconds = (tokenExpiryStartTime.plusSeconds((long) spotifyToken.getExpires_in()));
+        if (LocalTime.now().isAfter(startTimePlusExpirySeconds)) {
+            refreshToken();
+        }
+
         String respone = client.getRequest( CURRENTLY_PLAYING_URL, (getRequest) -> {
             getRequest.addHeader("Authorization", "Bearer " + spotifyToken.getAccess_token());
         });

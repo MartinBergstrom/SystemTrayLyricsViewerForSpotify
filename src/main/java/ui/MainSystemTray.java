@@ -27,7 +27,7 @@ public class MainSystemTray {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
                     CurrentlyPlaying currentlyPlaying = spotifyApiHandler.getMyCurrentlyPlaying();
-                    System.out.format("Currently playing song %s by %s", currentlyPlaying.getSong(), currentlyPlaying.getArtist());
+                    System.out.format("Currently playing song %s by %s\n", currentlyPlaying.getSong(), currentlyPlaying.getArtist());
                 }
             }
         });
