@@ -8,6 +8,7 @@ import com.google.gson.JsonParser;
 import customEvent.ServerEvent;
 import customEvent.ServerEventType;
 import http.MyHttpClient;
+import lyrics.LyricsFinderProviderImpl;
 import ui.MainSystemTray;
 
 import java.awt.*;
@@ -52,7 +53,7 @@ public class SpotifyApiHandler  {
     private void handleAuthorizationCode(String code) {
         String body = "grant_type=authorization_code" + "&code=" + code + "&redirect_uri=" + REDIRECT_URL;
         requestTokenApi(body);
-        mainSystemTray = new MainSystemTray(this);
+        mainSystemTray = new MainSystemTray(this, new LyricsFinderProviderImpl(client));
     }
 
     private void openAuthorizeUserInBrowser() {

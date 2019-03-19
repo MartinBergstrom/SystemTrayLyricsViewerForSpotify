@@ -1,5 +1,9 @@
 package ui;
 
+import http.MyHttpClient;
+import lyrics.LyricsFinder;
+import lyrics.LyricsFinderProvider;
+import lyrics.LyricsFinderProviderImpl;
 import spotifyApi.CurrentlyPlaying;
 import spotifyApi.SpotifyApiHandler;
 
@@ -8,19 +12,22 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.net.URL;
+import java.util.List;
 
 /**
  */
 public class MainSystemTray {
     private final TrayIcon trayIcon = new TrayIcon(createImage("images/rsz_1lyrics-text.png", "tray icon"));
     private SpotifyApiHandler spotifyApiHandler;
+    private List<LyricsFinder> lyricFinders;
 
-    public MainSystemTray(SpotifyApiHandler spotifyApiHandler) {
+    public MainSystemTray(SpotifyApiHandler spotifyApiHandler, LyricsFinderProvider lyricsFinderProvider) {
         if (!SystemTray.isSupported()) {
-            System.out.println("RecorderSystemTray is not supported");
+            System.out.println("System tray is not supported");
             return;
         }
         this.spotifyApiHandler = spotifyApiHandler;
+        lyricFinders = lyricsFinderProvider.getAllLyricsFinders();
 
         final SystemTray tray = SystemTray.getSystemTray();
         trayIcon.addMouseListener(new MouseAdapter() {
