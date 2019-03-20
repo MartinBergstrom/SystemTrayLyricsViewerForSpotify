@@ -1,5 +1,7 @@
 package lyrics;
 
+import spotifyApi.CurrentlyPlaying;
+
 import java.net.URL;
 
 public interface LyricsFinder {
@@ -7,5 +9,5 @@ public interface LyricsFinder {
     /**
      * @return null if no lyrics find
      */
-    URL findLyricsFor(String artist, String songname);
+    URL findLyricsFor(CurrentlyPlaying currentlyPlaying);
 }

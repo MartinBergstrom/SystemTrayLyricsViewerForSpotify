@@ -2,7 +2,7 @@ package lyrics;
 
 import http.MyHttpClient;
 import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
+import spotifyApi.CurrentlyPlaying;
 
 import java.awt.*;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-public class LyricsFinderBaseImpl implements  LyricsFinder {
+public class LyricsFinderBaseImpl extends AbstractLyricsFinder implements LyricsFinder {
     private static final String AZ_LYRICS = "https://www.azlyrics.com/lyrics";
     // https://www.azlyrics.com/lyrics/inflames/ithemask.html
 
@@ -21,8 +21,9 @@ public class LyricsFinderBaseImpl implements  LyricsFinder {
     }
 
     @Override
-    public URL findLyricsFor(String artist, String songname) {
-        String url = AZ_LYRICS + "/" + convertString(artist) + "/" + convertString(songname) + ".html";
+    public URL findLyricsFor(CurrentlyPlaying currentlyPlaying) {
+        String url = AZ_LYRICS + "/" + convertString(currentlyPlaying.getArtist()) + "/" +
+                convertString(currentlyPlaying.getSong()) + ".html";
         HttpResponse response = httpClient.getRequest(url);
 
         if (response.getStatusLine().getStatusCode() != 404){

@@ -11,6 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -34,6 +37,12 @@ public class MainSystemTray {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 1) {
                     CurrentlyPlaying currentlyPlaying = spotifyApiHandler.getMyCurrentlyPlaying();
+                    for (LyricsFinder lyricsFinder : lyricFinders) {
+                        URL url = lyricsFinder.findLyricsFor(currentlyPlaying);
+                        if (url != null) {
+                            openBrowserWithUrl(url);
+                        }
+                    }
                     System.out.format("Currently playing song %s by %s\n", currentlyPlaying.getSong(), currentlyPlaying.getArtist());
                 }
             }
@@ -42,6 +51,16 @@ public class MainSystemTray {
             tray.add(trayIcon);
         } catch (AWTException e) {
             System.out.println("TrayIcon could not be added.");
+        }
+    }
+
+    private static void openBrowserWithUrl(URL url) {
+        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+            try {
+                Desktop.getDesktop().browse(url.toURI());
+            } catch (IOException | URISyntaxException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
