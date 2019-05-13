@@ -6,9 +6,11 @@ import spotifyApi.CurrentlyPlaying;
 
 import java.awt.*;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Optional;
 
 public class LyricsFinderBaseImpl extends AbstractLyricsFinder implements LyricsFinder {
     private static final String AZ_LYRICS = "https://www.azlyrics.com/lyrics";
@@ -21,21 +23,19 @@ public class LyricsFinderBaseImpl extends AbstractLyricsFinder implements Lyrics
     }
 
     @Override
-    public URL findLyricsFor(CurrentlyPlaying currentlyPlaying) {
+    public Optional<URL> findLyricsFor(CurrentlyPlaying currentlyPlaying) {
         String url = AZ_LYRICS + "/" + convertString(currentlyPlaying.getArtist()) + "/" +
                 convertString(currentlyPlaying.getSong()) + ".html";
         HttpResponse response = httpClient.getRequest(url);
 
         if (response.getStatusLine().getStatusCode() != 404){
-            if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-                try {
-                    Desktop.getDesktop().browse(new URI(url));
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
+            try {
+                return Optional.of(new URL(url));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private static String convertString(String string) {

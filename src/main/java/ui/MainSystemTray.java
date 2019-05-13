@@ -1,9 +1,7 @@
 package ui;
 
-import http.MyHttpClient;
 import lyrics.LyricsFinder;
 import lyrics.LyricsFinderProvider;
-import lyrics.LyricsFinderProviderImpl;
 import spotifyApi.CurrentlyPlaying;
 import spotifyApi.SpotifyApiHandler;
 
@@ -12,10 +10,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 
 /**
  */
@@ -38,9 +36,10 @@ public class MainSystemTray {
                 if (e.getClickCount() == 1) {
                     CurrentlyPlaying currentlyPlaying = spotifyApiHandler.getMyCurrentlyPlaying();
                     for (LyricsFinder lyricsFinder : lyricFinders) {
-                        URL url = lyricsFinder.findLyricsFor(currentlyPlaying);
-                        if (url != null) {
-                            openBrowserWithUrl(url);
+                        Optional<URL> url = lyricsFinder.findLyricsFor(currentlyPlaying);
+                        if (url.isPresent()) {
+                            openBrowserWithUrl(url.get());
+                            break;
                         }
                     }
                     System.out.format("Currently playing song %s by %s\n", currentlyPlaying.getSong(), currentlyPlaying.getArtist());
