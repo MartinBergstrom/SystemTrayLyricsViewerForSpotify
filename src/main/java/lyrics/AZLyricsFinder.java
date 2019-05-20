@@ -4,21 +4,15 @@ import http.MyHttpClient;
 import org.apache.http.HttpResponse;
 import spotifyApi.CurrentlyPlaying;
 
-import java.awt.*;
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Optional;
 
-public class LyricsFinderBaseImpl extends AbstractLyricsFinder implements LyricsFinder {
+public class AZLyricsFinder implements LyricsFinder{
     private static final String AZ_LYRICS = "https://www.azlyrics.com/lyrics";
-    // https://www.azlyrics.com/lyrics/inflames/ithemask.html
-
     private MyHttpClient httpClient;
 
-    public LyricsFinderBaseImpl(MyHttpClient httpClient) {
+    public AZLyricsFinder(MyHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 

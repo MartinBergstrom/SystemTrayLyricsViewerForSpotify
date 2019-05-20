@@ -15,7 +15,8 @@ public class LyricsFinderProviderImpl implements LyricsFinderProvider{
     @Override
     public List<LyricsFinder> getAllLyricsFinders() {
         List<LyricsFinder> finders = new ArrayList<>();
-        finders.add(new LyricsFinderBaseImpl(myHttpClient));
+        finders.add(new AZLyricsFinder(myHttpClient));
+        finders.add(new FallbackLyricsFinder(myHttpClient));
         return  finders;
     }
 }
