@@ -26,10 +26,14 @@ public class FallbackLyricsFinder implements LyricsFinder {
         artist = currentlyPlaying.getArtist();
         song = currentlyPlaying.getSong();
         try {
-            return Optional.of(new URL(getGoogleUrl()));
+            return Optional.of(new URL(transform(getGoogleUrl())));
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    private static String transform(String input) {
+        return input.replaceAll(" ", "+");
     }
 }
