@@ -3,11 +3,13 @@ package http;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
@@ -29,7 +31,7 @@ public class MyHttpClient {
             response = client.execute(postRequest);
 
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != 200)
+            if (statusCode != HttpStatus.SC_OK)
             {
                 throw new RuntimeException("Failed with HTTP error code : " + statusCode);
             }
@@ -80,7 +82,6 @@ public class MyHttpClient {
     public String getRequest(String address, Consumer<HttpRequest> headerAdder) {
         HttpClient client = HttpClientBuilder.create().build();
         try {
-
             HttpGet getRequest = new HttpGet(address);
             headerAdder.accept(getRequest);
             HttpResponse response = client.execute(getRequest);
