@@ -2,3 +2,4 @@
 target/*
 *.iml
 *.credentials.txt
+credentials.txt
