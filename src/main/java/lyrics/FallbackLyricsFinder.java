@@ -1,6 +1,5 @@
 package lyrics;
 
-import http.MyHttpClient;
 import spotifyApi.CurrentlyPlaying;
 
 import java.net.MalformedURLException;
@@ -10,12 +9,6 @@ import java.util.Optional;
 public class FallbackLyricsFinder implements LyricsFinder {
     private String artist;
     private String song;
-
-    private MyHttpClient httpClient;
-
-    public FallbackLyricsFinder(MyHttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
 
     private String getGoogleUrl() {
         return "https://www.google.com/search?q=" +  artist + "+"+ song +"+lyrics";

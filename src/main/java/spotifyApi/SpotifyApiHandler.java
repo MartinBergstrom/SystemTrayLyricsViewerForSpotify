@@ -30,10 +30,6 @@ public class SpotifyApiHandler  {
 
     private LocalTime tokenExpiryStartTime;
 
-    private EventBus eventBus;
-
-    private MainSystemTray mainSystemTray;
-
     public SpotifyApiHandler(MyHttpClient client, EventBus eventBus) throws Exception {
         this.client = client;
         credentialsObtainer = new CredentialsObtainer();
@@ -53,7 +49,7 @@ public class SpotifyApiHandler  {
     private void handleAuthorizationCode(String code) {
         String body = "grant_type=authorization_code" + "&code=" + code + "&redirect_uri=" + REDIRECT_URL;
         requestTokenApi(body);
-        mainSystemTray = new MainSystemTray(this, new LyricsFinderProviderImpl(client));
+        new MainSystemTray(this, new LyricsFinderProviderImpl(client));
     }
 
     private void openAuthorizeUserInBrowser() {
@@ -93,10 +89,10 @@ public class SpotifyApiHandler  {
             refreshToken();
         }
 
-        String respone = client.getRequest( CURRENTLY_PLAYING_URL, (getRequest) -> {
+        String response = client.getRequest( CURRENTLY_PLAYING_URL, (getRequest) -> {
             getRequest.addHeader("Authorization", "Bearer " + spotifyToken.getAccess_token());
         });
-        JsonElement element =  new JsonParser().parse(respone);
+        JsonElement element =  new JsonParser().parse(response);
         String artist = element.getAsJsonObject()
                 .get("item").getAsJsonObject()
                 .get("artists").getAsJsonArray()

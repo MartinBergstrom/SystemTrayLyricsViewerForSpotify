@@ -25,6 +25,7 @@ public class AZLyricsFinder implements LyricsFinder{
         if (response.getStatusLine().getStatusCode() != 404){
             try {
                 return Optional.of(new URL(url));
+                // run and schedule robot with listener to break if mouse movement
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
