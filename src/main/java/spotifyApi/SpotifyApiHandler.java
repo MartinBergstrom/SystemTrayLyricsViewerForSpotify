@@ -13,7 +13,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Duration;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 public class SpotifyApiHandler {
     private static final String API_TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -85,20 +87,39 @@ public class SpotifyApiHandler {
             refreshToken();
         }
 
-        String response = client.getRequest(CURRENTLY_PLAYING_URL, (getRequest) -> {
-            getRequest.addHeader("Authorization", "Bearer " + spotifyToken.getAccess_token());
-        });
+        String response = client.getRequest(CURRENTLY_PLAYING_URL,
+                (getRequest) -> getRequest.addHeader("Authorization", "Bearer " + spotifyToken.getAccess_token()));
+
         JsonElement element = new JsonParser().parse(response);
-        String artist = element.getAsJsonObject()
+
+        if (element.getAsJsonObject()
+                .get("item").getAsJsonObject() == null)
+        {
+            throw new RuntimeException("Could not get currently playing");
+        }
+
+        String artist = getArtist(element);
+        String song = getSong(element);
+
+        Duration progress = Duration.of(element.getAsJsonObject().get("progress_ms").getAsLong(), ChronoUnit.MILLIS);
+        boolean isPlaying = element.getAsJsonObject().get("is_playing").getAsBoolean();
+
+        return new CurrentlyPlaying(artist, song, progress, isPlaying);
+    }
+
+    private static String getArtist(JsonElement element)
+    {
+        return element.getAsJsonObject()
                 .get("item").getAsJsonObject()
                 .get("artists").getAsJsonArray()
                 .get(0).getAsJsonObject().get("name").getAsString();
-        String song = element.getAsJsonObject()
+    }
+
+    private static String getSong(JsonElement element)
+    {
+        return element.getAsJsonObject()
                 .get("item").getAsJsonObject()
                 .get("name").getAsString();
-
-        return new CurrentlyPlaying(artist, song);
-
     }
 
 }

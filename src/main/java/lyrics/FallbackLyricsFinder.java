@@ -6,7 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
-public class FallbackLyricsFinder implements LyricsFinder {
+class FallbackLyricsFinder implements LyricsFinder {
     private String artist;
     private String song;
 
