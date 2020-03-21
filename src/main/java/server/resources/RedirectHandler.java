@@ -1,6 +1,5 @@
 package server.resources;
 
-import com.google.common.eventbus.EventBus;
 import customEvent.ServerEvent;
 import customEvent.ServerEventType;
 
@@ -9,13 +8,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.util.function.Consumer;
 
 @Path("redirect")
 public class RedirectHandler {
-    private EventBus eventBus;
+    private Consumer<ServerEvent> myEventCallback;
 
-    public RedirectHandler(EventBus eventBus){
-        this.eventBus = eventBus;
+    public RedirectHandler(Consumer<ServerEvent> eventCallback){
+        this.myEventCallback = eventCallback;
     }
 
     @GET
@@ -25,7 +25,7 @@ public class RedirectHandler {
                              @QueryParam("state") String state)
     {
         if (authCode != null) {
-            eventBus.post(new ServerEvent<>(ServerEventType.OBTAINED_AUTH_CODE_FROM_REDIRECT, authCode));
+            myEventCallback.accept(new ServerEvent(ServerEventType.OBTAINED_AUTH_CODE_FROM_REDIRECT, authCode));
             return "Successfully authorized the user, you may close this page\n";
         }
         return "Could not authorize the user, error message: " + error;

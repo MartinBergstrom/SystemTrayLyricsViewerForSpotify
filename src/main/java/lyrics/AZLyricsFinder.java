@@ -8,7 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
-public class AZLyricsFinder implements LyricsFinder{
+public class AZLyricsFinder implements LyricsFinder {
     private static final String AZ_LYRICS = "https://www.azlyrics.com/lyrics";
     private MyHttpClient httpClient;
 
@@ -22,7 +22,7 @@ public class AZLyricsFinder implements LyricsFinder{
                 convertString(currentlyPlaying.getSong()) + ".html";
         HttpResponse response = httpClient.getRequest(url);
 
-        if (response.getStatusLine().getStatusCode() != 404){
+        if (response.getStatusLine().getStatusCode() != 404) {
             try {
                 return Optional.of(new URL(url));
                 // run and schedule robot with listener to break if mouse movement
@@ -34,6 +34,6 @@ public class AZLyricsFinder implements LyricsFinder{
     }
 
     private static String convertString(String string) {
-        return string.toLowerCase().replace(" ","");
+        return string.toLowerCase().replace(" ", "");
     }
 }

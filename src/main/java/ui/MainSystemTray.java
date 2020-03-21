@@ -1,6 +1,5 @@
 package ui;
 
-import lyrics.FallbackLyricsFinder;
 import lyrics.LyricsFinder;
 import lyrics.LyricsFinderProvider;
 import spotifyApi.CurrentlyPlaying;

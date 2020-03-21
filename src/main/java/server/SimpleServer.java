@@ -1,6 +1,5 @@
 package server;
 
-import com.google.common.eventbus.EventBus;
 import customEvent.ServerEvent;
 import customEvent.ServerEventType;
 import org.eclipse.jetty.server.Server;
@@ -10,12 +9,14 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 import server.resources.RedirectHandler;
 
-public class SimpleServer {
-    public static final String PORT = "8055";
-    private EventBus eventBus;
+import java.util.function.Consumer;
 
-    public SimpleServer(EventBus eventBus) {
-        this.eventBus = eventBus;
+public class SimpleServer {
+    private static final String PORT = "8055";
+    private Consumer<ServerEvent> myEventCallback;
+
+    public SimpleServer(Consumer<ServerEvent> eventCallback) {
+        this.myEventCallback = eventCallback;
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         handler.setContextPath("/");
 
@@ -29,7 +30,7 @@ public class SimpleServer {
 
         try {
             jettyServer.start();
-            eventBus.post(new ServerEvent(ServerEventType.STARTED));
+            myEventCallback.accept(new ServerEvent(ServerEventType.STARTED));
             jettyServer.join();
         } catch (Exception e) {
             e.printStackTrace();
@@ -37,7 +38,7 @@ public class SimpleServer {
     }
     private ResourceConfig createResourceConfig(){
         ResourceConfig resourceConfig = new ResourceConfig();
-        RedirectHandler handler = new RedirectHandler(eventBus);
+        RedirectHandler handler = new RedirectHandler(myEventCallback);
         resourceConfig.register(handler);
         return resourceConfig;
     }

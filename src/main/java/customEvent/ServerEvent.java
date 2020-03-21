@@ -1,23 +1,23 @@
 package customEvent;
 
-public class ServerEvent<T> {
+public class ServerEvent {
     private ServerEventType type;
-    private T payload;
+    private String message;
 
     public ServerEvent(ServerEventType type) {
         this.type = type;
     }
 
-    public ServerEvent(ServerEventType type, T payload) {
+    public ServerEvent(ServerEventType type, String message) {
         this.type = type;
-        this.payload = payload;
+        this.message = message;
     }
 
     public ServerEventType getType() {
         return type;
     }
 
-    public T getPayload() {
-        return payload;
+    public String getMessage() {
+        return message;
     }
 }

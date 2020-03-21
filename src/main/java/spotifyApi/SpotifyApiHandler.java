@@ -1,7 +1,5 @@
 package spotifyApi;
 
-import com.google.common.eventbus.EventBus;
-import com.google.common.eventbus.Subscribe;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -17,7 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalTime;
 
-public class SpotifyApiHandler  {
+public class SpotifyApiHandler {
     private static final String API_TOKEN_URL = "https://accounts.spotify.com/api/token";
     private static final String AUTH_URL = "https://accounts.spotify.com/authorize";
     private static final String CURRENTLY_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing";
@@ -30,18 +28,16 @@ public class SpotifyApiHandler  {
 
     private LocalTime tokenExpiryStartTime;
 
-    public SpotifyApiHandler(MyHttpClient client, EventBus eventBus) throws Exception {
+    public SpotifyApiHandler(MyHttpClient client) throws Exception {
         this.client = client;
         credentialsObtainer = new CredentialsObtainer();
-        eventBus.register(this);
     }
 
-    @Subscribe
-    public void handleServerEvent(ServerEvent<String> serverEvent) {
+    public void handleServerEvent(ServerEvent serverEvent) {
         if (serverEvent.getType() == ServerEventType.STARTED) {
             openAuthorizeUserInBrowser();
         } else if (serverEvent.getType() == ServerEventType.OBTAINED_AUTH_CODE_FROM_REDIRECT) {
-            String authCode = serverEvent.getPayload();
+            String authCode = serverEvent.getMessage();
             handleAuthorizationCode(authCode);
         }
     }
@@ -89,15 +85,15 @@ public class SpotifyApiHandler  {
             refreshToken();
         }
 
-        String response = client.getRequest( CURRENTLY_PLAYING_URL, (getRequest) -> {
+        String response = client.getRequest(CURRENTLY_PLAYING_URL, (getRequest) -> {
             getRequest.addHeader("Authorization", "Bearer " + spotifyToken.getAccess_token());
         });
-        JsonElement element =  new JsonParser().parse(response);
+        JsonElement element = new JsonParser().parse(response);
         String artist = element.getAsJsonObject()
                 .get("item").getAsJsonObject()
                 .get("artists").getAsJsonArray()
                 .get(0).getAsJsonObject().get("name").getAsString();
-        String song =  element.getAsJsonObject()
+        String song = element.getAsJsonObject()
                 .get("item").getAsJsonObject()
                 .get("name").getAsString();
 
