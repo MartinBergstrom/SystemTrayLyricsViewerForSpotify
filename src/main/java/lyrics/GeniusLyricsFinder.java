@@ -8,20 +8,23 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 
-class GeniusLyricsFinder implements LyricsFinder{
+class GeniusLyricsFinder implements LyricsFinder {
     private static final String GENIUS_URL = "https://www.genius.com/";
     private MyHttpClient httpClient;
+    private final ArtistAndSongStringFormatter artistAndSongStringFormatter;
 
     GeniusLyricsFinder(MyHttpClient httpClient) {
         this.httpClient = httpClient;
+        this.artistAndSongStringFormatter = new ArtistAndSongStringFormatter().addDelimiterReplaceWhiteSpace("-");
     }
 
     @Override
     public Optional<URL> findLyricsFor(CurrentlyPlaying currentlyPlaying) {
-        String convertedArtist = new ArtistAndSongStringFormatter(currentlyPlaying.getArtist()).format();
-        String convertedSong = new ArtistAndSongStringFormatter(currentlyPlaying.getSong())
-                .addDelimiter("-")
-                .format();
+        String convertedArtist =  artistAndSongStringFormatter.format(currentlyPlaying.getMyArtist());
+        String convertedSong = artistAndSongStringFormatter.format(currentlyPlaying.getSong());
+
+        System.out.println("CONVERTED ARTIST: " + convertedArtist);
+        System.out.println("CONVERTED SONG: " + convertedSong);
 
         String url = GENIUS_URL + convertedArtist + "-" + convertedSong + "-lyrics";
         HttpResponse response = httpClient.getRequest(url);
@@ -36,5 +39,8 @@ class GeniusLyricsFinder implements LyricsFinder{
         return Optional.empty();
     }
 
-
+    @Override
+    public LyricsWebPage getLyricsWebPage() {
+        return LyricsWebPage.GENIUS;
+    }
 }

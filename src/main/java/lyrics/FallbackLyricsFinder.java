@@ -16,7 +16,7 @@ class FallbackLyricsFinder implements LyricsFinder {
 
     @Override
     public Optional<URL> findLyricsFor(CurrentlyPlaying currentlyPlaying) {
-        artist = currentlyPlaying.getArtist();
+        artist = currentlyPlaying.getMyArtist();
         song = currentlyPlaying.getSong();
         try {
             return Optional.of(new URL(transform(getGoogleUrl())));
@@ -24,6 +24,11 @@ class FallbackLyricsFinder implements LyricsFinder {
             e.printStackTrace();
         }
         return Optional.empty();
+    }
+
+    @Override
+    public LyricsWebPage getLyricsWebPage() {
+        return LyricsWebPage.GOOGLE;
     }
 
     private static String transform(String input) {

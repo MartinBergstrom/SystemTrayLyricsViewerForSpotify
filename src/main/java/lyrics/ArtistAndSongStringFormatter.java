@@ -1,33 +1,38 @@
 package lyrics;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Pattern;
+
 class ArtistAndSongStringFormatter {
-    private String myFormattedString;
+    private static final Pattern BASE_REGEX = Pattern.compile("\\s?-?\\s?([\\d]{4})?\\s?([rR]emaster(ed)?|[mM]ix).*");
+    private Set<Function<String, String>> formatterFunctions;
 
-    ArtistAndSongStringFormatter(String myFormattedString) {
-        this.myFormattedString = myFormattedString.replaceAll("[rR]emastered", "")
-                .replaceAll("-", "")
-                .replaceAll("(.*)(Live [aA]t.*)", "$1")
-                .toLowerCase()
-                .trim();
+    ArtistAndSongStringFormatter() {
+        this.formatterFunctions = new HashSet<>();
     }
 
-    ArtistAndSongStringFormatter addDelimiter(String delimiter) {
-        myFormattedString = myFormattedString.replaceAll(" ", delimiter);
-        return this;
-    }
-
-    ArtistAndSongStringFormatter addReplaceAlloperation(String regex, String replace) {
-        myFormattedString = myFormattedString.replaceAll(regex, replace);
+    ArtistAndSongStringFormatter addDelimiterReplaceWhiteSpace(String delimiter) {
+        formatterFunctions.add(string -> string.replaceAll(" ", delimiter));
         return this;
     }
 
     ArtistAndSongStringFormatter addRemoveAllWhiteSpace() {
-        myFormattedString = myFormattedString.replace(" ", "");
+        formatterFunctions.add(string -> string.replace(" ", ""));
         return this;
     }
 
-    String format() {
-        return myFormattedString;
+    String format(String stringToFormat) {
+        String baseFormattedString = BASE_REGEX.matcher(stringToFormat).replaceAll("")
+                .replaceAll("(.*)(Live [aA]t.*)", "$1")
+                .toLowerCase()
+                .trim();
+        for (Function<String, String> formatterFn: this.formatterFunctions)
+        {
+            baseFormattedString = formatterFn.apply(baseFormattedString);
+        }
+        return baseFormattedString;
     }
 
 

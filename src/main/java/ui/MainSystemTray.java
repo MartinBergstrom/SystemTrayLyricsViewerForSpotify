@@ -2,6 +2,7 @@ package ui;
 
 import lyrics.LyricsFinder;
 import lyrics.LyricsFinderProvider;
+import robot.RobotLyricsScrollerCoordinator;
 import spotifyApi.CurrentlyPlaying;
 import spotifyApi.SpotifyApiHandler;
 
@@ -20,6 +21,7 @@ import java.util.Optional;
 public class MainSystemTray {
     private final TrayIcon trayIcon = new TrayIcon(createImage("images/rsz_1lyrics-text.png", "tray icon"));
     private List<LyricsFinder> lyricFinders;
+    private RobotLyricsScrollerCoordinator myRobotCoordinator;
 
     public MainSystemTray(SpotifyApiHandler spotifyApiHandler, LyricsFinderProvider lyricsFinderProvider) {
         if (!SystemTray.isSupported()) {
@@ -27,6 +29,12 @@ public class MainSystemTray {
             return;
         }
         lyricFinders = lyricsFinderProvider.getAllLyricsFinders();
+        try {
+            myRobotCoordinator = new RobotLyricsScrollerCoordinator(spotifyApiHandler);
+        } catch (AWTException e) {
+            System.out.println("Robot not supported");
+            e.printStackTrace();
+        }
 
         PopupMenu popup = new PopupMenu();
         MenuItem aboutItem = new MenuItem("Exit");
@@ -43,15 +51,16 @@ public class MainSystemTray {
         trayIcon.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-                    CurrentlyPlaying currentlyPlaying = spotifyApiHandler.getMyCurrentlyPlaying();
+                    CurrentlyPlaying currentlyPlaying = spotifyApiHandler.requestCurrentlyPlaying();
                     for (LyricsFinder lyricsFinder : lyricFinders) {
                         Optional<URL> url = lyricsFinder.findLyricsFor(currentlyPlaying);
                         if (url.isPresent()) {
                             openBrowserWithUrl(url.get());
+                            launchRobotScroller(lyricsFinder);
                             break;
                         }
                     }
-                    System.out.format("Currently playing song %s by %s\n", currentlyPlaying.getSong(), currentlyPlaying.getArtist());
+                    System.out.format("Currently playing song %s by %s\n", currentlyPlaying.getSong(), currentlyPlaying.getMyArtist());
                 }
             }
         });
@@ -62,6 +71,10 @@ public class MainSystemTray {
                 AWTException e) {
             System.out.println("TrayIcon could not be added.");
         }
+    }
+
+    private void launchRobotScroller(LyricsFinder lyricsFinder) {
+            myRobotCoordinator.launchRobotScrollerForType(lyricsFinder.getLyricsWebPage());
     }
 
     private static void openBrowserWithUrl(URL url) {

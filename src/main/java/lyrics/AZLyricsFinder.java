@@ -11,20 +11,19 @@ import java.util.Optional;
 class AZLyricsFinder implements LyricsFinder {
     private static final String AZ_LYRICS = "https://www.azlyrics.com/lyrics/";
     private MyHttpClient httpClient;
+    private final ArtistAndSongStringFormatter artistAndSongStringFormatter;
 
     AZLyricsFinder(MyHttpClient httpClient) {
         this.httpClient = httpClient;
+        this.artistAndSongStringFormatter = new ArtistAndSongStringFormatter()
+                .addRemoveAllWhiteSpace();
     }
 
     @Override
     public Optional<URL> findLyricsFor(CurrentlyPlaying currentlyPlaying) {
-        String convertedSongName = new ArtistAndSongStringFormatter(currentlyPlaying.getSong())
-                .addRemoveAllWhiteSpace()
-                .format();
+        String convertedSongName = artistAndSongStringFormatter.format(currentlyPlaying.getSong());
 
-        String convertedArtistName = new ArtistAndSongStringFormatter(currentlyPlaying.getArtist())
-                .addRemoveAllWhiteSpace()
-                .format();
+        String convertedArtistName = artistAndSongStringFormatter.format(currentlyPlaying.getMyArtist());
 
         String url = AZ_LYRICS + convertedArtistName + "/" + convertedSongName + ".html";
         HttpResponse response = httpClient.getRequest(url);
@@ -38,6 +37,11 @@ class AZLyricsFinder implements LyricsFinder {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public LyricsWebPage getLyricsWebPage() {
+        return LyricsWebPage.AZ;
     }
 
 }

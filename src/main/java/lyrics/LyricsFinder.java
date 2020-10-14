@@ -7,8 +7,8 @@ import java.util.Optional;
 
 public interface LyricsFinder {
 
-    /**
-     * @return null if no lyrics find
-     */
     Optional<URL> findLyricsFor(CurrentlyPlaying currentlyPlaying);
+
+    LyricsWebPage getLyricsWebPage();
+
 }

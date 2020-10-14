@@ -2,6 +2,7 @@ package spotifyApi;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import customEvent.ServerEvent;
 import customEvent.ServerEventType;
@@ -81,7 +82,7 @@ public class SpotifyApiHandler {
         requestTokenApi(body);
     }
 
-    public CurrentlyPlaying getMyCurrentlyPlaying() {
+    public CurrentlyPlaying requestCurrentlyPlaying() {
         LocalTime startTimePlusExpirySeconds = (tokenExpiryStartTime.plusSeconds((long) spotifyToken.getExpires_in()));
         if (LocalTime.now().isAfter(startTimePlusExpirySeconds)) {
             refreshToken();
@@ -90,35 +91,41 @@ public class SpotifyApiHandler {
         String response = client.getRequest(CURRENTLY_PLAYING_URL,
                 (getRequest) -> getRequest.addHeader("Authorization", "Bearer " + spotifyToken.getAccess_token()));
 
-        JsonElement element = new JsonParser().parse(response);
+        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
 
-        if (element.getAsJsonObject()
-                .get("item").getAsJsonObject() == null)
-        {
+        if (jsonObject.get("item").getAsJsonObject() == null) {
             throw new RuntimeException("Could not get currently playing");
         }
 
-        String artist = getArtist(element);
-        String song = getSong(element);
-
-        Duration progress = Duration.of(element.getAsJsonObject().get("progress_ms").getAsLong(), ChronoUnit.MILLIS);
-        boolean isPlaying = element.getAsJsonObject().get("is_playing").getAsBoolean();
-
-        return new CurrentlyPlaying(artist, song, progress, isPlaying);
+        return CurrentlyPlaying.newBuilder()
+                .withArtist(getArtist(jsonObject))
+                .withSong(getSong(jsonObject))
+                .withSongProgress(getSongProgress(jsonObject))
+                .withSongLength(getSongLength(jsonObject))
+                .withIsCurrentlyPlaying(getCurrentlyPlaying(jsonObject))
+                .build();
     }
 
-    private static String getArtist(JsonElement element)
-    {
-        return element.getAsJsonObject()
-                .get("item").getAsJsonObject()
+    private boolean getCurrentlyPlaying(JsonObject object) {
+        return object.get("is_playing").getAsBoolean();
+    }
+
+    private Duration getSongLength(JsonObject object) {
+        return Duration.of(object.get("duration_ms").getAsLong(), ChronoUnit.MILLIS);
+    }
+
+    private Duration getSongProgress(JsonObject object) {
+        return Duration.of(object.get("progress_ms").getAsLong(), ChronoUnit.MILLIS);
+    }
+
+    private static String getArtist(JsonObject object) {
+        return object.get("item").getAsJsonObject()
                 .get("artists").getAsJsonArray()
                 .get(0).getAsJsonObject().get("name").getAsString();
     }
 
-    private static String getSong(JsonElement element)
-    {
-        return element.getAsJsonObject()
-                .get("item").getAsJsonObject()
+    private static String getSong(JsonObject object) {
+        return object.get("item").getAsJsonObject()
                 .get("name").getAsString();
     }
 
