@@ -49,9 +49,9 @@ public class SpotifyApiInitalizer {
     }
 
     private void handleAuthorizationCode(String code) {
-        SpotifyApiHandler spotifyApiHandler = new SpotifyApiHandler(client, credentialsObtainer, requestInitialToken(code));
+        SpotifyApi spotifyApi = new SpotifyApi(client, credentialsObtainer, requestInitialToken(code));
 
-        new MainSystemTray(spotifyApiHandler, new LyricsFinderProviderImpl(client));
+        new MainSystemTray(spotifyApi, new LyricsFinderProviderImpl(client));
     }
 
     private SpotifyToken requestInitialToken(String code) {

@@ -9,7 +9,7 @@ import java.time.Duration;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
-public class SpotifyApiHandler {
+public class SpotifyApi {
     private static final String API_TOKEN_URL = "https://accounts.spotify.com/api/token";
     private static final String CURRENTLY_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing";
 
@@ -17,7 +17,7 @@ public class SpotifyApiHandler {
     private MyHttpClient myClient;
     private CredentialsObtainer myCredentialsObtainer;
 
-    SpotifyApiHandler(MyHttpClient client, CredentialsObtainer credentialsObtainer, SpotifyToken initialToken) {
+    SpotifyApi(MyHttpClient client, CredentialsObtainer credentialsObtainer, SpotifyToken initialToken) {
         myClient = client;
         myCredentialsObtainer = credentialsObtainer;
         mySpotifyToken = initialToken;

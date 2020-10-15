@@ -4,7 +4,7 @@ import lyrics.LyricsFinder;
 import lyrics.LyricsFinderProvider;
 import robot.RobotLyricsScrollerCoordinator;
 import spotifyApi.CurrentlyPlaying;
-import spotifyApi.SpotifyApiHandler;
+import spotifyApi.SpotifyApi;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,14 +23,14 @@ public class MainSystemTray {
     private List<LyricsFinder> lyricFinders;
     private RobotLyricsScrollerCoordinator myRobotCoordinator;
 
-    public MainSystemTray(SpotifyApiHandler spotifyApiHandler, LyricsFinderProvider lyricsFinderProvider) {
+    public MainSystemTray(SpotifyApi spotifyApi, LyricsFinderProvider lyricsFinderProvider) {
         if (!SystemTray.isSupported()) {
             System.out.println("System tray is not supported");
             return;
         }
         lyricFinders = lyricsFinderProvider.getAllLyricsFinders();
         try {
-            myRobotCoordinator = new RobotLyricsScrollerCoordinator(spotifyApiHandler);
+            myRobotCoordinator = new RobotLyricsScrollerCoordinator(spotifyApi);
         } catch (AWTException e) {
             System.out.println("Robot not supported");
             e.printStackTrace();
@@ -41,17 +41,17 @@ public class MainSystemTray {
         aboutItem.addActionListener(e -> System.exit(0));
         popup.add(aboutItem);
 
-        setUpTray(spotifyApiHandler, popup);
+        setUpTray(spotifyApi, popup);
     }
 
-    private void setUpTray(SpotifyApiHandler spotifyApiHandler, PopupMenu popup) {
+    private void setUpTray(SpotifyApi spotifyApi, PopupMenu popup) {
         SystemTray tray = SystemTray.getSystemTray();
         trayIcon.setPopupMenu(popup);
 
         trayIcon.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
-                    CurrentlyPlaying currentlyPlaying = spotifyApiHandler.requestCurrentlyPlaying();
+                    CurrentlyPlaying currentlyPlaying = spotifyApi.requestCurrentlyPlaying();
                     for (LyricsFinder lyricsFinder : lyricFinders) {
                         Optional<URL> url = lyricsFinder.findLyricsFor(currentlyPlaying);
                         if (url.isPresent()) {

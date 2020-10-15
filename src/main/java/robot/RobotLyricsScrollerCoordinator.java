@@ -2,7 +2,7 @@ package robot;
 
 import lyrics.LyricsWebPage;
 import spotifyApi.CurrentlyPlaying;
-import spotifyApi.SpotifyApiHandler;
+import spotifyApi.SpotifyApi;
 
 import java.awt.*;
 import java.sql.Timestamp;
@@ -12,13 +12,13 @@ import java.util.concurrent.Future;
 
 public class RobotLyricsScrollerCoordinator {
     private final RobotLyricsScrollerFactory myFactory;
-    private final SpotifyApiHandler mySpotifyApi;
+    private final SpotifyApi mySpotifyApi;
     private final ExecutorService myExecutorService = Executors.newSingleThreadExecutor();
     private Future<?> myFuture;
 
-    public RobotLyricsScrollerCoordinator(SpotifyApiHandler spotifyApiHandler) throws AWTException {
+    public RobotLyricsScrollerCoordinator(SpotifyApi spotifyApi) throws AWTException {
         myFactory = new RobotLyricsScrollerFactory();
-        mySpotifyApi = spotifyApiHandler;
+        mySpotifyApi = spotifyApi;
     }
 
     public void launchRobotScrollerForType(LyricsWebPage type) {
@@ -35,10 +35,10 @@ public class RobotLyricsScrollerCoordinator {
 
     private class RobotScrollerTask implements Runnable {
         private RobotLyricsScroller myRobotScroller;
-        private SpotifyApiHandler mySpotifyApi;
+        private SpotifyApi mySpotifyApi;
         private CurrentlyPlaying myInitalCurrentlyPlaying;
 
-        private RobotScrollerTask(RobotLyricsScroller robotScroller, SpotifyApiHandler spotifyApi) {
+        private RobotScrollerTask(RobotLyricsScroller robotScroller, SpotifyApi spotifyApi) {
             myRobotScroller = robotScroller;
             mySpotifyApi = spotifyApi;
             myInitalCurrentlyPlaying = spotifyApi.requestCurrentlyPlaying();
