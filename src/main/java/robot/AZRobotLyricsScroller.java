@@ -13,11 +13,11 @@ public class AZRobotLyricsScroller implements RobotLyricsScroller {
 
     @Override
     public void run(Duration progress, Duration songLength) {
-        sleep(2000);
+        //sleep(2000);
 
         for (int i = 0; i < 20; i++) {
-            myRobot.keyPress(KeyEvent.VK_DOWN);
-            sleep(1000);
+            //myRobot.keyPress(KeyEvent.VK_DOWN);
+            //sleep(1000);
         }
 
     }
@@ -32,7 +32,7 @@ public class AZRobotLyricsScroller implements RobotLyricsScroller {
         try {
             Thread.sleep(mills);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            // Intentionally left empty
         }
     }
 }
