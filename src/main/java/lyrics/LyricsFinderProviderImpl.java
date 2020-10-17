@@ -16,8 +16,8 @@ public class LyricsFinderProviderImpl implements LyricsFinderProvider{
     public List<LyricsFinder> getAllLyricsFinders() {
         List<LyricsFinder> finders = new ArrayList<>();
 
-        finders.add(new GeniusLyricsFinder(myHttpClient));
         finders.add(new AZLyricsFinder(myHttpClient));
+        finders.add(new GeniusLyricsFinder(myHttpClient));
         finders.add(new FallbackLyricsFinder());
 
         return  finders;

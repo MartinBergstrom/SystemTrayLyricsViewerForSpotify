@@ -5,19 +5,19 @@ import lyrics.LyricsWebPage;
 import java.awt.*;
 import java.util.Optional;
 
-class RobotLyricsScrollerFactory {
+public class RobotLyricsScrollerFactory {
     private final Robot myRobot;
 
-    RobotLyricsScrollerFactory() throws AWTException {
+    public RobotLyricsScrollerFactory() throws AWTException {
         myRobot = new Robot();
     }
 
-    Optional<RobotLyricsScroller> getForType(LyricsWebPage type) {
+    public Optional<RobotLyricsScroller> getForType(LyricsWebPage type) {
         switch (type) {
             case AZ:
                 return Optional.of(new AZRobotLyricsScroller(myRobot));
             case GENIUS:
-                return Optional.of(new GeniusRobotLyricsSroller(myRobot));
+                return Optional.empty();
             case GOOGLE:
                 return Optional.empty();
             default:

@@ -1,10 +1,11 @@
 package ui;
 
-import lyrics.LyricsFinder;
-import lyrics.LyricsFinderProvider;
-import robot.RobotLyricsScrollerCoordinator;
 import api.spotifyApi.CurrentlyPlaying;
 import api.spotifyApi.SpotifyApi;
+import lyrics.LyricsFinder;
+import lyrics.LyricsFinderProvider;
+import robot.RobotLyricsScroller;
+import robot.RobotLyricsScrollerFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,7 +22,7 @@ import java.util.Optional;
 public class MainSystemTray {
     private final TrayIcon trayIcon = new TrayIcon(createImage("images/rsz_1lyrics-text.png", "tray icon"));
     private List<LyricsFinder> lyricFinders;
-    private RobotLyricsScrollerCoordinator myRobotCoordinator;
+    private RobotLyricsScrollerFactory robotLyricsScrollerFactory;
 
     public MainSystemTray(SpotifyApi spotifyApi, LyricsFinderProvider lyricsFinderProvider) {
         if (!SystemTray.isSupported()) {
@@ -30,7 +31,7 @@ public class MainSystemTray {
         }
         lyricFinders = lyricsFinderProvider.getAllLyricsFinders();
         try {
-            myRobotCoordinator = new RobotLyricsScrollerCoordinator(spotifyApi);
+            robotLyricsScrollerFactory = new RobotLyricsScrollerFactory();
         } catch (AWTException e) {
             System.out.println("Robot not supported");
             e.printStackTrace();
@@ -56,7 +57,7 @@ public class MainSystemTray {
                         Optional<URL> url = lyricsFinder.findLyricsFor(currentlyPlaying);
                         if (url.isPresent()) {
                             openBrowserWithUrl(url.get());
-                            launchRobotScroller(lyricsFinder, url.get());
+                            launchRobotScroller(lyricsFinder);
                             break;
                         }
                     }
@@ -73,8 +74,14 @@ public class MainSystemTray {
         }
     }
 
-    private void launchRobotScroller(LyricsFinder lyricsFinder, URL url) {
-            myRobotCoordinator.launchRobotScrollerForType(lyricsFinder.getLyricsWebPage(), url);
+    private void launchRobotScroller(LyricsFinder lyricsFinder) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        robotLyricsScrollerFactory.getForType(lyricsFinder.getLyricsWebPage())
+                .ifPresent(RobotLyricsScroller::adjustStartingPosition);
     }
 
     private static void openBrowserWithUrl(URL url) {

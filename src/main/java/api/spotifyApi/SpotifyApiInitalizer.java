@@ -52,7 +52,7 @@ public class SpotifyApiInitalizer implements ApiInitializer {
 
         SpotifyToken token = new SpotifyToken(refreshToken, LocalDateTime.MIN);
 
-        lauchApiAndSystemTray(token);
+        launchApiAndSystemTray(token);
     }
 
     @Override
@@ -60,10 +60,10 @@ public class SpotifyApiInitalizer implements ApiInitializer {
         SpotifyToken token = requestInitialToken(authCode);
         spotifyCredentials.saveRefreshToken(token.getRefresh_token());
 
-        lauchApiAndSystemTray(token);
+        launchApiAndSystemTray(token);
     }
 
-    private void lauchApiAndSystemTray(SpotifyToken spotifyToken) {
+    private void launchApiAndSystemTray(SpotifyToken spotifyToken) {
         SpotifyApi spotifyApi = new SpotifyApi(client, spotifyCredentials, spotifyToken);
 
         new MainSystemTray(spotifyApi, new LyricsFinderProviderImpl(client));
