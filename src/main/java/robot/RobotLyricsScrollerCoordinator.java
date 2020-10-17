@@ -1,10 +1,11 @@
 package robot;
 
 import lyrics.LyricsWebPage;
-import spotifyApi.CurrentlyPlaying;
-import spotifyApi.SpotifyApi;
+import api.spotifyApi.CurrentlyPlaying;
+import api.spotifyApi.SpotifyApi;
 
 import java.awt.*;
+import java.net.URL;
 import java.sql.Timestamp;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,15 +22,15 @@ public class RobotLyricsScrollerCoordinator {
         mySpotifyApi = spotifyApi;
     }
 
-    public void launchRobotScrollerForType(LyricsWebPage type) {
-        System.out.println("stopping future at :" + new Timestamp(System.currentTimeMillis()));
+    public void launchRobotScrollerForType(LyricsWebPage type, URL url) {
+        System.out.println("Stopping future at :" + new Timestamp(System.currentTimeMillis()));
         if (myFuture != null) {
             myFuture.cancel(true);
         }
 
         myFactory.getForType(type).ifPresent(robotLyricsScroller -> {
-            System.out.println("launching new robot task at :" + new Timestamp(System.currentTimeMillis()));
-            myFuture = myExecutorService.submit(new RobotScrollerTask(robotLyricsScroller, mySpotifyApi));
+            System.out.println("Launching new robot task at :" + new Timestamp(System.currentTimeMillis()));
+            myFuture = myExecutorService.submit(new RobotScrollerTask(robotLyricsScroller, mySpotifyApi, url));
         });
     }
 
@@ -37,12 +38,15 @@ public class RobotLyricsScrollerCoordinator {
         private RobotLyricsScroller myRobotScroller;
         private SpotifyApi mySpotifyApi;
         private CurrentlyPlaying myInitalCurrentlyPlaying;
+        private URL myUrl;
 
-        private RobotScrollerTask(RobotLyricsScroller robotScroller, SpotifyApi spotifyApi) {
+        private RobotScrollerTask(RobotLyricsScroller robotScroller, SpotifyApi spotifyApi, URL url) {
             myRobotScroller = robotScroller;
             mySpotifyApi = spotifyApi;
+            myUrl = url;
             myInitalCurrentlyPlaying = spotifyApi.requestCurrentlyPlaying();
         }
+
 
         @Override
         public void run() {
@@ -53,9 +57,10 @@ public class RobotLyricsScrollerCoordinator {
 
                 currentlyPlaying = mySpotifyApi.requestCurrentlyPlaying();
                 if (!currentlyPlaying.isCurrentlyPlaying()) {
-                    myRobotScroller.pause();
+                    //myRobotScroller.pause();
                 } else {
-                    myRobotScroller.run(currentlyPlaying.getSongProgress(), currentlyPlaying.getSongLength());
+                    myRobotScroller.run(currentlyPlaying, myUrl);
+                    //         myRobot.keyPress(KeyEvent.VK_DOWN);
                 }
             } while (!Thread.currentThread().isInterrupted() && isSameSong(currentlyPlaying));
 

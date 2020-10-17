@@ -1,5 +1,5 @@
 *.idea
 target/*
 *.iml
-*.credentials.txt
-credentials.txt
+*.credentials.*.txt
+credentials.*.txt

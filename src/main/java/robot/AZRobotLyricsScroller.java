@@ -1,38 +1,37 @@
 package robot;
 
+import http.MyHttpClient;
+import api.spotifyApi.CurrentlyPlaying;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.time.Duration;
+import java.net.URL;
+
 
 public class AZRobotLyricsScroller implements RobotLyricsScroller {
     private final Robot myRobot;
+    private final MyHttpClient httpClient;
+    private int myPreviousProgress;
 
     AZRobotLyricsScroller(Robot robot) {
         myRobot = robot;
+        httpClient = new MyHttpClient();
     }
 
+    // length on master of puppets is 18621
+    // length of avicci levels is 15007, whereas length of lyrics are 138, so 14869 standard+
+    //
     @Override
-    public void run(Duration progress, Duration songLength) {
-        //sleep(2000);
+    public void run(CurrentlyPlaying current, URL url) {
+        String response = httpClient.getRequest(url.toString());
 
-        for (int i = 0; i < 20; i++) {
-            //myRobot.keyPress(KeyEvent.VK_DOWN);
-            //sleep(1000);
-        }
+        myRobot.keyPress(KeyEvent.VK_DOWN);
 
     }
 
-    @Override
-    public void pause() {
-
-    }
-
-
-    private void sleep(int mills) {
-        try {
-            Thread.sleep(mills);
-        } catch (InterruptedException e) {
-            // Intentionally left empty
-        }
+    private int getNumberOfLineBreaks(String response)
+    {
+        //
+        return 0;
     }
 }

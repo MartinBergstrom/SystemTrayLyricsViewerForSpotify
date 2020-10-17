@@ -1,4 +1,4 @@
-package spotifyApi;
+package api.spotifyApi;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -6,7 +6,7 @@ import com.google.gson.JsonParser;
 import http.MyHttpClient;
 
 import java.time.Duration;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class SpotifyApi {
@@ -15,16 +15,16 @@ public class SpotifyApi {
 
     private SpotifyToken mySpotifyToken;
     private MyHttpClient myClient;
-    private CredentialsObtainer myCredentialsObtainer;
+    private SpotifyCredentials mySpotifyCredentials;
 
-    SpotifyApi(MyHttpClient client, CredentialsObtainer credentialsObtainer, SpotifyToken initialToken) {
+    SpotifyApi(MyHttpClient client, SpotifyCredentials spotifyCredentials, SpotifyToken initialToken) {
         myClient = client;
-        myCredentialsObtainer = credentialsObtainer;
+        mySpotifyCredentials = spotifyCredentials;
         mySpotifyToken = initialToken;
     }
 
     private void requestTokenApi(String body) {
-        String encoded = myCredentialsObtainer.getBase64encodedCredentials();
+        String encoded = mySpotifyCredentials.getBase64encodedCredentials();
         String response = myClient.postRequest(API_TOKEN_URL, body, (postRequest) -> {
             postRequest.addHeader("Content-Type", "application/x-www-form-urlencoded");
             postRequest.addHeader("Authorization", "Basic " + encoded);
@@ -41,8 +41,8 @@ public class SpotifyApi {
     }
 
     public CurrentlyPlaying requestCurrentlyPlaying() {
-        LocalTime startTimePlusExpirySeconds = (mySpotifyToken.getTokenExpiryStartTime().plusSeconds((long) mySpotifyToken.getExpires_in()));
-        if (LocalTime.now().isAfter(startTimePlusExpirySeconds)) {
+        LocalDateTime startTimePlusExpirySeconds = (mySpotifyToken.getTokenExpiryStartTime().plusSeconds((long) mySpotifyToken.getExpires_in()));
+        if (LocalDateTime.now().isAfter(startTimePlusExpirySeconds)) {
             refreshToken();
         }
 

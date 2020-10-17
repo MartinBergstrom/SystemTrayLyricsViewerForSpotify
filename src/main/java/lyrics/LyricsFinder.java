@@ -1,6 +1,6 @@
 package lyrics;
 
-import spotifyApi.CurrentlyPlaying;
+import api.spotifyApi.CurrentlyPlaying;
 
 import java.net.URL;
 import java.util.Optional;

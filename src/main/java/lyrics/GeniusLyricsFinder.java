@@ -2,7 +2,7 @@ package lyrics;
 
 import http.MyHttpClient;
 import org.apache.http.HttpResponse;
-import spotifyApi.CurrentlyPlaying;
+import api.spotifyApi.CurrentlyPlaying;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -27,7 +27,7 @@ class GeniusLyricsFinder implements LyricsFinder {
         System.out.println("CONVERTED SONG: " + convertedSong);
 
         String url = GENIUS_URL + convertedArtist + "-" + convertedSong + "-lyrics";
-        HttpResponse response = httpClient.getRequest(url);
+        HttpResponse response = httpClient.getRequestHttpResponse(url);
 
         if (response.getStatusLine().getStatusCode() != 404) {
             try {

@@ -3,8 +3,8 @@ package ui;
 import lyrics.LyricsFinder;
 import lyrics.LyricsFinderProvider;
 import robot.RobotLyricsScrollerCoordinator;
-import spotifyApi.CurrentlyPlaying;
-import spotifyApi.SpotifyApi;
+import api.spotifyApi.CurrentlyPlaying;
+import api.spotifyApi.SpotifyApi;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,7 +56,7 @@ public class MainSystemTray {
                         Optional<URL> url = lyricsFinder.findLyricsFor(currentlyPlaying);
                         if (url.isPresent()) {
                             openBrowserWithUrl(url.get());
-                            launchRobotScroller(lyricsFinder);
+                            launchRobotScroller(lyricsFinder, url.get());
                             break;
                         }
                     }
@@ -73,8 +73,8 @@ public class MainSystemTray {
         }
     }
 
-    private void launchRobotScroller(LyricsFinder lyricsFinder) {
-            myRobotCoordinator.launchRobotScrollerForType(lyricsFinder.getLyricsWebPage());
+    private void launchRobotScroller(LyricsFinder lyricsFinder, URL url) {
+            myRobotCoordinator.launchRobotScrollerForType(lyricsFinder.getLyricsWebPage(), url);
     }
 
     private static void openBrowserWithUrl(URL url) {

@@ -1,6 +1,6 @@
 package lyrics;
 
-import spotifyApi.CurrentlyPlaying;
+import api.spotifyApi.CurrentlyPlaying;
 
 import java.net.MalformedURLException;
 import java.net.URL;

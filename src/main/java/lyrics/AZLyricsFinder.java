@@ -2,7 +2,7 @@ package lyrics;
 
 import http.MyHttpClient;
 import org.apache.http.HttpResponse;
-import spotifyApi.CurrentlyPlaying;
+import api.spotifyApi.CurrentlyPlaying;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,7 +26,7 @@ class AZLyricsFinder implements LyricsFinder {
         String convertedArtistName = artistAndSongStringFormatter.format(currentlyPlaying.getMyArtist());
 
         String url = AZ_LYRICS + convertedArtistName + "/" + convertedSongName + ".html";
-        HttpResponse response = httpClient.getRequest(url);
+        HttpResponse response = httpClient.getRequestHttpResponse(url);
 
         if (response.getStatusLine().getStatusCode() != 404) {
             try {

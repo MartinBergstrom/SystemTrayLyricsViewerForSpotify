@@ -17,7 +17,7 @@ class RobotLyricsScrollerFactory {
             case AZ:
                 return Optional.of(new AZRobotLyricsScroller(myRobot));
             case GENIUS:
-                return null;
+                return Optional.of(new GeniusRobotLyricsSroller(myRobot));
             case GOOGLE:
                 return Optional.empty();
             default:

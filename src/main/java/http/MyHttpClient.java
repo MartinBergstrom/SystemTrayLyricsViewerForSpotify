@@ -63,7 +63,7 @@ public class MyHttpClient {
         return null;
     }
 
-    public HttpResponse getRequest(String address) {
+    public HttpResponse getRequestHttpResponse(String address) {
         HttpClient client = HttpClientBuilder.create().build();
         try {
             HttpGet getRequest = new HttpGet(address);
@@ -77,6 +77,24 @@ public class MyHttpClient {
         }
         return null;
     }
+
+    public String getRequest(String address) {
+        HttpClient client = HttpClientBuilder.create().build();
+        try {
+            HttpGet getRequest = new HttpGet(address);
+            HttpResponse response = client.execute(getRequest);
+            HttpEntity httpEntity = response.getEntity();
+            return EntityUtils.toString(httpEntity);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally
+        {
+            client.getConnectionManager().shutdown();
+        }
+        return null;
+    }
+
 
     public String getRequest(String address, Consumer<HttpRequest> headerAdder) {
         HttpClient client = HttpClientBuilder.create().build();

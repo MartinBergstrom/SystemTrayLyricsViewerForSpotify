@@ -1,22 +1,22 @@
 package server;
 
-import customEvent.ServerEvent;
-import customEvent.ServerEventType;
+import api.API;
+import api.ApiInitializer;
+import api.ApiInitializers;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
-import server.resources.RedirectHandler;
+import server.resources.RedirectHandlerGenius;
+import server.resources.RedirectHandlerSpotify;
 
-import java.util.function.Consumer;
-
-public class SimpleServer {
+public class RedirectServer {
     private static final String PORT = "8055";
-    private Consumer<ServerEvent> myEventCallback;
+    private ApiInitializers myApiInitalizers;
 
-    public SimpleServer(Consumer<ServerEvent> eventCallback) {
-        this.myEventCallback = eventCallback;
+    public RedirectServer(ApiInitializers apiInitializers) {
+        this.myApiInitalizers = apiInitializers;
         ServletContextHandler handler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         handler.setContextPath("/");
 
@@ -30,16 +30,19 @@ public class SimpleServer {
 
         try {
             jettyServer.start();
-            myEventCallback.accept(new ServerEvent(ServerEventType.STARTED));
+            myApiInitalizers.getAll().forEach(ApiInitializer::authorizeUser);
             jettyServer.join();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    private ResourceConfig createResourceConfig(){
+
+    private ResourceConfig createResourceConfig() {
         ResourceConfig resourceConfig = new ResourceConfig();
-        RedirectHandler handler = new RedirectHandler(myEventCallback);
-        resourceConfig.register(handler);
+        RedirectHandlerSpotify handlerSpotify = new RedirectHandlerSpotify(myApiInitalizers.get(API.SPOTIFY));
+        RedirectHandlerGenius handlerGenius = new RedirectHandlerGenius(myApiInitalizers.get(API.GENIUS));
+        resourceConfig.register(handlerSpotify);
+        resourceConfig.register(handlerGenius);
         return resourceConfig;
     }
 

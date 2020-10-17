@@ -1,4 +1,4 @@
-package spotifyApi;
+package api.spotifyApi;
 
 import java.time.Duration;
 

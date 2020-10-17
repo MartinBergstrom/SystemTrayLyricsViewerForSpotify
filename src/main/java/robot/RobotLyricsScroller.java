@@ -1,11 +1,11 @@
 package robot;
 
-import java.time.Duration;
+import api.spotifyApi.CurrentlyPlaying;
+
+import java.net.URL;
 
 public interface RobotLyricsScroller {
 
-    void run(Duration progress, Duration songLength);
-
-    void pause();
+    void run(CurrentlyPlaying current, URL url);
 
 }

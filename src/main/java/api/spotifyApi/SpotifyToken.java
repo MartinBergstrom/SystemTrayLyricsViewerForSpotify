@@ -1,16 +1,16 @@
-package spotifyApi;
+package api.spotifyApi;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 public class SpotifyToken {
 
     private String access_token;
     private String token_type;
     private String scope;
-    private transient LocalTime tokenExpiryStartTime;
+    private transient LocalDateTime tokenExpiryStartTime;
 
     public SpotifyToken() {
-        this.tokenExpiryStartTime = LocalTime.now();
+        this.tokenExpiryStartTime = LocalDateTime.now();
     }
 
     // Number of seconds before it expires
@@ -22,7 +22,7 @@ public class SpotifyToken {
         return access_token;
     }
 
-    public LocalTime getTokenExpiryStartTime() {
+    public LocalDateTime getTokenExpiryStartTime() {
         return tokenExpiryStartTime;
     }
 
