@@ -75,11 +75,6 @@ public class MainSystemTray {
     }
 
     private void launchRobotScroller(LyricsFinder lyricsFinder) {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         robotLyricsScrollerFactory.getForType(lyricsFinder.getLyricsWebPage())
                 .ifPresent(RobotLyricsScroller::adjustStartingPosition);
     }
