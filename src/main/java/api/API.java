@@ -2,5 +2,5 @@ package api;
 
 public enum API {
     SPOTIFY,
-    GENIUS
+    MUSIX_MATCH
 }

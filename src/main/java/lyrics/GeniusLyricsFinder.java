@@ -9,7 +9,7 @@ import java.net.URL;
 import java.util.Optional;
 
 class GeniusLyricsFinder implements LyricsFinder {
-    private static final String GENIUS_URL = "https://www.genius.com/";
+    private static final String GENIUS_URL = "https://www.musixmatch.com/";
     private MyHttpClient httpClient;
     private final ArtistAndSongStringFormatter artistAndSongStringFormatter;
 

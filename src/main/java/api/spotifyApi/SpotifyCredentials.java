@@ -1,5 +1,7 @@
 package api.spotifyApi;
 
+import com.sun.org.apache.regexp.internal.RE;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,10 +14,10 @@ class SpotifyCredentials {
     private static final String FILE_PATH_NAME = "D:\\Progg\\Workarea\\spotifylyricssystemtray\\credentials_spotify.txt";
     private static final String CLIENT_ID_KEY = "clientID";
     private static final String SECRET_KEY = "secret";
-    private static final String ACCESS_TOKEN = "accessToken";
+    private static final String REFRESH_TOKEN = "refreshToken";
     private String clientId;
     private String secret;
-    private String accessToken;
+    private String refreshToken;
 
     private final Properties prop;
 
@@ -26,20 +28,20 @@ class SpotifyCredentials {
         input.close();
         clientId = prop.getProperty(CLIENT_ID_KEY);
         secret = prop.getProperty(SECRET_KEY);
-        accessToken = prop.getProperty(ACCESS_TOKEN);
+        refreshToken = prop.getProperty(REFRESH_TOKEN);
     }
 
-    void saveAccessToken(String accessToken) {
+    void saveRefreshToken(String refreshToken) {
         try {
-            prop.setProperty(ACCESS_TOKEN, accessToken);
+            prop.setProperty(REFRESH_TOKEN, refreshToken);
             prop.store(new FileOutputStream(FILE_PATH_NAME), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    Optional<String> getAccessToken() {
-        return Optional.ofNullable(accessToken);
+    Optional<String> getRefreshToken() {
+        return Optional.ofNullable(refreshToken);
     }
 
     String getBase64encodedCredentials() {

@@ -8,6 +8,6 @@ public interface ApiInitializer {
 
     void launchApi();
 
-    void launchApi(String accessToken);
+    void launchApi(String authCode);
 
 }

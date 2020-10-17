@@ -10,7 +10,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Optional;
+import java.time.LocalDateTime;
 
 public class SpotifyApiInitalizer implements ApiInitializer {
     private static final String API_TOKEN_URL = "https://accounts.spotify.com/api/token";
@@ -28,7 +28,7 @@ public class SpotifyApiInitalizer implements ApiInitializer {
 
     @Override
     public boolean isInitialized() {
-        return spotifyCredentials.getAccessToken().isPresent();
+        return spotifyCredentials.getRefreshToken().isPresent() && !spotifyCredentials.getRefreshToken().get().isEmpty();
     }
 
     @Override
@@ -47,20 +47,24 @@ public class SpotifyApiInitalizer implements ApiInitializer {
 
     @Override
     public void launchApi() {
-        String accessToken = spotifyCredentials.getAccessToken()
-                .orElseThrow(() -> new IllegalStateException("No accessToken found, unable to launch api"));
+        String refreshToken = spotifyCredentials.getRefreshToken()
+                .orElseThrow(() -> new IllegalStateException("No refreshToken found, unable to launch api"));
 
-        lauchApiAndSystemTray(accessToken);
+        SpotifyToken token = new SpotifyToken(refreshToken, LocalDateTime.MIN);
+
+        lauchApiAndSystemTray(token);
     }
 
     @Override
-    public void launchApi(String accessToken) {
-        spotifyCredentials.saveAccessToken(accessToken);
-        lauchApiAndSystemTray(accessToken);
+    public void launchApi(String authCode) {
+        SpotifyToken token = requestInitialToken(authCode);
+        spotifyCredentials.saveRefreshToken(token.getRefresh_token());
+
+        lauchApiAndSystemTray(token);
     }
 
-    private void lauchApiAndSystemTray(String accessToken) {
-        SpotifyApi spotifyApi = new SpotifyApi(client, spotifyCredentials, requestInitialToken(accessToken));
+    private void lauchApiAndSystemTray(SpotifyToken spotifyToken) {
+        SpotifyApi spotifyApi = new SpotifyApi(client, spotifyCredentials, spotifyToken);
 
         new MainSystemTray(spotifyApi, new LyricsFinderProviderImpl(client));
     }

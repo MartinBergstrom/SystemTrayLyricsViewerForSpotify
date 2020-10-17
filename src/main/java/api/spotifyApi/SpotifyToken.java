@@ -8,15 +8,18 @@ public class SpotifyToken {
     private String token_type;
     private String scope;
     private transient LocalDateTime tokenExpiryStartTime;
+    // Number of seconds before it expires
+    private int expires_in;
+    private String refresh_token;
 
     public SpotifyToken() {
         this.tokenExpiryStartTime = LocalDateTime.now();
     }
 
-    // Number of seconds before it expires
-    private int expires_in;
-
-    private String refresh_token;
+    public SpotifyToken(String refresh_token, LocalDateTime tokenExpiryStartTime) {
+        this.refresh_token = refresh_token;
+        this.tokenExpiryStartTime = tokenExpiryStartTime;
+    }
 
     public String getAccess_token() {
         return access_token;

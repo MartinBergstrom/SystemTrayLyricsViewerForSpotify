@@ -1,6 +1,5 @@
 package api;
 
-import api.genius.GeniusApiInitializer;
 import api.spotifyApi.SpotifyApiInitalizer;
 import http.MyHttpClient;
 
@@ -13,7 +12,6 @@ public class ApiInitializers {
         myInitializerMapping = new HashMap<>();
 
         myInitializerMapping.put(API.SPOTIFY, new SpotifyApiInitalizer(httpClient));
-        myInitializerMapping.put(API.GENIUS, new GeniusApiInitializer(httpClient));
     }
 
     public ApiInitializer get(API api) {

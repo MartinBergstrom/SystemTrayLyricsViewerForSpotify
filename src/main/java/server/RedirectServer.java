@@ -8,7 +8,6 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
-import server.resources.RedirectHandlerGenius;
 import server.resources.RedirectHandlerSpotify;
 
 public class RedirectServer {
@@ -40,9 +39,7 @@ public class RedirectServer {
     private ResourceConfig createResourceConfig() {
         ResourceConfig resourceConfig = new ResourceConfig();
         RedirectHandlerSpotify handlerSpotify = new RedirectHandlerSpotify(myApiInitalizers.get(API.SPOTIFY));
-        RedirectHandlerGenius handlerGenius = new RedirectHandlerGenius(myApiInitalizers.get(API.GENIUS));
         resourceConfig.register(handlerSpotify);
-        resourceConfig.register(handlerGenius);
         return resourceConfig;
     }
 
