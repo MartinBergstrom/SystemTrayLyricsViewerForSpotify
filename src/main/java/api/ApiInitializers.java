@@ -1,14 +1,14 @@
 package api;
 
 import api.spotifyApi.SpotifyApiInitalizer;
-import http.MyHttpClient;
+import http.SimpleHttpClient;
 
 import java.util.*;
 
 public class ApiInitializers {
     private final Map<API, ApiInitializer> myInitializerMapping;
 
-    public ApiInitializers(MyHttpClient httpClient) throws Exception {
+    public ApiInitializers(SimpleHttpClient httpClient) throws Exception {
         myInitializerMapping = new HashMap<>();
 
         myInitializerMapping.put(API.SPOTIFY, new SpotifyApiInitalizer(httpClient));

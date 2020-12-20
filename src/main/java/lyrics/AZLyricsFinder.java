@@ -1,6 +1,6 @@
 package lyrics;
 
-import http.MyHttpClient;
+import http.SimpleHttpClient;
 import org.apache.http.HttpResponse;
 import api.spotifyApi.CurrentlyPlaying;
 
@@ -10,10 +10,10 @@ import java.util.Optional;
 
 class AZLyricsFinder implements LyricsFinder {
     private static final String AZ_LYRICS = "https://www.azlyrics.com/lyrics/";
-    private MyHttpClient httpClient;
+    private SimpleHttpClient httpClient;
     private final ArtistAndSongStringFormatter artistAndSongStringFormatter;
 
-    AZLyricsFinder(MyHttpClient httpClient) {
+    AZLyricsFinder(SimpleHttpClient httpClient) {
         this.httpClient = httpClient;
         this.artistAndSongStringFormatter = new ArtistAndSongStringFormatter()
                 .addRemoveAllWhiteSpace();

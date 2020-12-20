@@ -53,15 +53,17 @@ public class MainSystemTray {
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 1) {
                     CurrentlyPlaying currentlyPlaying = spotifyApi.requestCurrentlyPlaying();
-                    for (LyricsFinder lyricsFinder : lyricFinders) {
-                        Optional<URL> url = lyricsFinder.findLyricsFor(currentlyPlaying);
-                        if (url.isPresent()) {
-                            openBrowserWithUrl(url.get());
-                            launchRobotScroller(lyricsFinder);
-                            break;
+                    if (currentlyPlaying != null) {
+                        for (LyricsFinder lyricsFinder : lyricFinders) {
+                            Optional<URL> url = lyricsFinder.findLyricsFor(currentlyPlaying);
+                            if (url.isPresent()) {
+                                openBrowserWithUrl(url.get());
+                                launchRobotScroller(lyricsFinder);
+                                break;
+                            }
                         }
+                        System.out.format("Currently playing song %s by %s\n", currentlyPlaying.getSong(), currentlyPlaying.getMyArtist());
                     }
-                    System.out.format("Currently playing song %s by %s\n", currentlyPlaying.getSong(), currentlyPlaying.getMyArtist());
                 }
             }
         });

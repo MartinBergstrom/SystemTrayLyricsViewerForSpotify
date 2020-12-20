@@ -3,7 +3,7 @@ package api.spotifyApi;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import http.MyHttpClient;
+import http.SimpleHttpClient;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -14,16 +14,20 @@ public class SpotifyApi {
     private static final String CURRENTLY_PLAYING_URL = "https://api.spotify.com/v1/me/player/currently-playing";
 
     private SpotifyToken mySpotifyToken;
-    private MyHttpClient myClient;
+    private SimpleHttpClient myClient;
     private SpotifyCredentials mySpotifyCredentials;
 
-    SpotifyApi(MyHttpClient client, SpotifyCredentials spotifyCredentials, SpotifyToken initialToken) {
+    SpotifyApi(SimpleHttpClient client, SpotifyCredentials spotifyCredentials, SpotifyToken initialToken) {
         myClient = client;
         mySpotifyCredentials = spotifyCredentials;
         mySpotifyToken = initialToken;
     }
 
-    private void requestTokenApi(String body) {
+    private void refreshToken() {
+        String refreshToken = mySpotifyToken.getRefresh_token();
+        LocalDateTime expiryStartTime = mySpotifyToken.getTokenExpiryStartTime();
+
+        String body = "grant_type=refresh_token" + "&refresh_token=" + refreshToken;
         String encoded = mySpotifyCredentials.getBase64encodedCredentials();
         String response = myClient.postRequest(API_TOKEN_URL, body, (postRequest) -> {
             postRequest.addHeader("Content-Type", "application/x-www-form-urlencoded");
@@ -33,11 +37,14 @@ public class SpotifyApi {
                 .setPrettyPrinting()
                 .create()
                 .fromJson(response, SpotifyToken.class);
-    }
-
-    private void refreshToken() {
-        String body = "grant_type=refresh_token" + "&refresh_token=" + mySpotifyToken.getRefresh_token();
-        requestTokenApi(body);
+        if (mySpotifyToken.getRefresh_token() == null || mySpotifyToken.getRefresh_token().isEmpty()) {
+            mySpotifyToken = new SpotifyToken(mySpotifyToken.getAccess_token(),
+                    mySpotifyToken.getScope(),
+                    mySpotifyToken.getExpires_in(),
+                    refreshToken,
+                    expiryStartTime);
+        }
+        mySpotifyCredentials.saveRefreshToken(mySpotifyToken.getRefresh_token(), mySpotifyToken.getTokenExpiryStartTime());
     }
 
     public CurrentlyPlaying requestCurrentlyPlaying() {
@@ -48,6 +55,10 @@ public class SpotifyApi {
 
         String response = myClient.getRequest(CURRENTLY_PLAYING_URL,
                 (getRequest) -> getRequest.addHeader("Authorization", "Bearer " + mySpotifyToken.getAccess_token()));
+        if (response == null) {
+            System.out.println("No response from: " + CURRENTLY_PLAYING_URL + ". Spotify paused?");
+            return null;
+        }
 
         JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
 

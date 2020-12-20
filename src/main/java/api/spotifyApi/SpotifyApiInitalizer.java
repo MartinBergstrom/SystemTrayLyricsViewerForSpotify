@@ -2,7 +2,7 @@ package api.spotifyApi;
 
 import api.ApiInitializer;
 import com.google.gson.GsonBuilder;
-import http.MyHttpClient;
+import http.SimpleHttpClient;
 import lyrics.LyricsFinderProviderImpl;
 import ui.MainSystemTray;
 
@@ -19,9 +19,9 @@ public class SpotifyApiInitalizer implements ApiInitializer {
     private static final String REDIRECT_URL = "http://127.0.0.1:8055/redirect";
 
     private SpotifyCredentials spotifyCredentials;
-    private MyHttpClient client;
+    private SimpleHttpClient client;
 
-    public SpotifyApiInitalizer(MyHttpClient client) throws Exception {
+    public SpotifyApiInitalizer(SimpleHttpClient client) throws Exception {
         this.client = client;
         this.spotifyCredentials = new SpotifyCredentials();
     }
@@ -49,8 +49,10 @@ public class SpotifyApiInitalizer implements ApiInitializer {
     public void launchApi() {
         String refreshToken = spotifyCredentials.getRefreshToken()
                 .orElseThrow(() -> new IllegalStateException("No refreshToken found, unable to launch api"));
+        LocalDateTime refreshTokenAcquireTime = spotifyCredentials.getRefreshTokenAcquireTime()
+                .orElseThrow(() -> new IllegalStateException("No refreshTokenAcquireTime found, unable to launch api"));
 
-        SpotifyToken token = new SpotifyToken(refreshToken, LocalDateTime.MIN);
+        SpotifyToken token = new SpotifyToken(refreshToken, refreshTokenAcquireTime);
 
         launchApiAndSystemTray(token);
     }
@@ -58,7 +60,7 @@ public class SpotifyApiInitalizer implements ApiInitializer {
     @Override
     public void launchApi(String authCode) {
         SpotifyToken token = requestInitialToken(authCode);
-        spotifyCredentials.saveRefreshToken(token.getRefresh_token());
+        spotifyCredentials.saveRefreshToken(token.getRefresh_token(), token.getTokenExpiryStartTime());
 
         launchApiAndSystemTray(token);
     }

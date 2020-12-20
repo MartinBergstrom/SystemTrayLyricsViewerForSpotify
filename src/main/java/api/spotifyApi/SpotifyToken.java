@@ -21,6 +21,14 @@ public class SpotifyToken {
         this.tokenExpiryStartTime = tokenExpiryStartTime;
     }
 
+    public SpotifyToken(String access_token, String scope, int epxires_in, String refresh_token, LocalDateTime tokenExpiryStartTime) {
+        this.access_token = access_token;
+        this.scope = scope;
+        this.expires_in = epxires_in;
+        this.refresh_token = refresh_token;
+        this.tokenExpiryStartTime = tokenExpiryStartTime;
+    }
+
     public String getAccess_token() {
         return access_token;
     }

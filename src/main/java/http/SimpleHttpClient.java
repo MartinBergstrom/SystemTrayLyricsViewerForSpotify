@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.function.Consumer;
 
 
-public class MyHttpClient {
+public class SimpleHttpClient {
 
     public String postRequest(String address,
                               String payload,
@@ -30,17 +30,14 @@ public class MyHttpClient {
             response = client.execute(postRequest);
 
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode != HttpStatus.SC_OK)
-            {
+            if (statusCode != HttpStatus.SC_OK) {
                 throw new RuntimeException("Failed with HTTP error code : " + statusCode);
             }
             HttpEntity httpEntity = response.getEntity();
             return EntityUtils.toString(httpEntity);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             client.getConnectionManager().shutdown();
         }
         return null;
@@ -55,9 +52,7 @@ public class MyHttpClient {
             return EntityUtils.toString(httpEntity);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             client.getConnectionManager().shutdown();
         }
         return null;
@@ -70,9 +65,7 @@ public class MyHttpClient {
             return client.execute(getRequest);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             client.getConnectionManager().shutdown();
         }
         return null;
@@ -87,9 +80,7 @@ public class MyHttpClient {
             return EntityUtils.toString(httpEntity);
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             client.getConnectionManager().shutdown();
         }
         return null;
@@ -103,12 +94,12 @@ public class MyHttpClient {
             headerAdder.accept(getRequest);
             HttpResponse response = client.execute(getRequest);
             HttpEntity httpEntity = response.getEntity();
-            return EntityUtils.toString(httpEntity);
+            if (httpEntity != null) {
+                return EntityUtils.toString(httpEntity);
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        finally
-        {
+        } finally {
             client.getConnectionManager().shutdown();
         }
         return null;

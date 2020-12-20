@@ -1,6 +1,6 @@
 package lyrics;
 
-import http.MyHttpClient;
+import http.SimpleHttpClient;
 import org.apache.http.HttpResponse;
 import api.spotifyApi.CurrentlyPlaying;
 
@@ -10,10 +10,10 @@ import java.util.Optional;
 
 class GeniusLyricsFinder implements LyricsFinder {
     private static final String GENIUS_URL = "https://genius.com/";
-    private MyHttpClient httpClient;
+    private SimpleHttpClient httpClient;
     private final ArtistAndSongStringFormatter artistAndSongStringFormatter;
 
-    GeniusLyricsFinder(MyHttpClient httpClient) {
+    GeniusLyricsFinder(SimpleHttpClient httpClient) {
         this.httpClient = httpClient;
         this.artistAndSongStringFormatter = new ArtistAndSongStringFormatter().addDelimiterReplaceWhiteSpace("-");
     }
