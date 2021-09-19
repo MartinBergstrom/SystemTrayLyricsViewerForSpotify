@@ -18,7 +18,7 @@ public class GeniusRobotLyricsScroller implements RobotLyricsScroller {
             e.printStackTrace();
         }
 
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 10; i++) {
             myRobot.keyPress(KeyEvent.VK_DOWN);
             try {
                 Thread.sleep(200);
