@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 class SpotifyCredentials {
-    private static final String FILE_PATH_NAME = "D:\\Progg\\Workarea\\spotifylyricssystemtray\\credentials_spotify.txt";
+    private static final String FILE_PATH_NAME = "D:\\Progg\\dev\\spotify-lyrics\\credentials_spotify.txt";
     private static final String CLIENT_ID_KEY = "clientID";
     private static final String SECRET_KEY = "secret";
     private static final String REFRESH_TOKEN = "refreshToken";
